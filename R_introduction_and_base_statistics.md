@@ -12,9 +12,8 @@ Full story on Wikipedia:  https://en.wikipedia.org/wiki/Iris_flower_data_set
 
 ```R
 
-attach(iris) #Attaches data example dataset
 
-iris.ttest <- subset(iris,Species!="virginica") #drops all virginica records
+attach(iris) #Attaches data example dataset
 
 head(iris) # print first rows of table
 colnames(iris) # print first rows of table
@@ -66,12 +65,26 @@ t.test(sample_data1, sample_data2, paired = TRUE) # test random data
 t.test(all_data ~ binary_data, var.equal = TRUE) # test with formula and binary data
 
 var.test(sample_data1, sample_data2) # only test variances
-
 ```
 
 ## ANOVA
 
+```R
 
+attach(iris) #Attaches data example dataset
+
+lm.iris1 <- lm(Sepal.Width~Species, data=iris) #makes a 'linear model' object 
+
+library(car) # lets try to load this package
+
+install.packages("car") # if not installed yet?
+
+
+
+
+
+
+```
 
 ## Hypothesis testing
 
