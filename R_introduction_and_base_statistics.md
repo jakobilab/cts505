@@ -1,5 +1,8 @@
 # Introduction to R base: fundamental statistical analyses
 
+## Read in Excel and CSV files
+
+
 ## The iris dataset
 
 Fisher (1936). "The use of multiple measurements in taxonomic problems". Annals of Eugenics. 7 (2): 179–188. doi: https://doi.org/10.1111%2Fj.1469-1809.1936.tb02137.x
@@ -69,22 +72,65 @@ var.test(sample_data1, sample_data2) # only test variances
 
 ## ANOVA
 
+### One-way ANOVA
+
 ```R
 
 attach(iris) #Attaches data example dataset
 
-lm.iris1 <- lm(Sepal.Width~Species, data=iris) #makes a 'linear model' object 
+lm.iris <- lm(Sepal.Width~Species, data=iris) #makes a 'linear model' object 
 
 library(car) # lets try to load this package
 
-install.packages("car") # if not installed yet?
+# install.packages("car") # if not installed yet?
 
+leveneTest(lm.iris) # test for equal variances
 
+anova(lm.iris) # run anova
 
+summary(lm.iris1) # generate summary table
 
+# we know: one group is different, but which one (if more than 2 groups provided)
 
+iris.aov<-aov(Sepal.Width~Species,data=iris)  # calculate the test statistic for ANOVA AND determine whether there is significant variation among the groups 
+
+# bonus: works with tukey test
+
+# TukeyHSD: Compute Tukey Honest Significant Differences
+TukeyHSD(iris.aov)
+```
+
+### Two-way ANOVA
+
+```R
+
+# predict if sepal width differs among species and community
+
+v <-c ("high","low") # generate category 
+
+iris$community<-v # set new data
+
+# always test assumptions before running test:
+# adding community variable to formula
+# testing for an interaction between Species and community.
+
+lm.iris2<-lm(Sepal.Width~Species*community,data=iris) #makes a 'linear model' object 
+
+leveneTest(lm.iris2) # test variances
+
+# we will find community is not sig. different, so can leave it out next
+
+iris2.aov<-aov(Sepal.Width~Species,data=iris)
+TukeyHSD(iris2.aov)
+
+# however, lets play this out with community actually being significant
+
+iris3.aov<-aov(Sepal.Width~Species*community,data=iris)
+TukeyHSD(iris3.aov)
 
 ```
+
+
 
 ## Hypothesis testing
 
