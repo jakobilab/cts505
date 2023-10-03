@@ -1,6 +1,57 @@
 # Introduction to R base: fundamental statistical analyses
 
-## Read in Excel and CSV files
+## Read input files
+
+### Excel files
+
+```R
+# first we need to install a suitable package
+install.packages("openxlsx", dependencies = TRUE)
+
+# lets look at the function call to read an XLSX file
+
+read.xlsx(
+  xlsxFile,
+  sheet,
+  startRow = 1,
+  colNames = TRUE,
+  rowNames = FALSE,
+  detectDates = FALSE,
+  skipEmptyRows = TRUE,
+  skipEmptyCols = TRUE,
+  rows = NULL,
+  cols = NULL,
+  check.names = FALSE,
+  sep.names = ".",
+  namedRegion = NULL,
+  na.strings = "NA",
+  fillMergedCells = FALSE
+)
+
+# sample call
+sample_data <- readWorkbook("sample.xlsx", sheet=1)
+```
+
+### CSV (comma-separated value) files
+
+```R
+# Read tabular data into R
+read.table(file, header = FALSE, sep = "", dec = ".")
+
+# Read "comma separated value" files (".csv")
+read.csv(file, header = TRUE, sep = ",", dec = ".", ...)
+
+# Or use read.csv2: variant used in countries that 
+# use a comma as decimal point and a semicolon as field separator.
+read.csv2(file, header = TRUE, sep = ";", dec = ",", ...)
+
+# Read TAB delimited files
+read.delim(file, header = TRUE, sep = "\t", dec = ".", ...)
+read.delim2(file, header = TRUE, sep = "\t", dec = ",", ...)
+
+data <- read.csv("input.csv") # read contents of input.csv
+print(data)
+```
 
 
 ## The iris dataset
@@ -132,5 +183,92 @@ TukeyHSD(iris3.aov)
 
 
 
-## Hypothesis testing
+## Chi-square
 
+```R
+
+attach(iris)
+
+iris <- iris[iris$Species != "virginica",] # subselect only 2 species
+
+iris$Species<- factor(iris$Species) # make a factor
+
+head(iris)
+
+# break the variable into 2 categories, below and above the median value.
+iris$Petal.Width.Cat <- cut(iris$Petal.Width, breaks = quantile(iris$Petal.Width, probs = seq(0, 1, 0.5)), include.lowest = TRUE)
+levels(iris$Petal.Width.Cat) <- c("below", "above")
+
+head(iris)
+
+# Drop Petal.Width column
+iris <- iris[,!(names(iris) %in% "Petal.Width")]
+
+head(iris)
+
+# make table
+tab <- table(iris$Petal.Width.Cat, iris$Species)
+tab
+
+# To perform the chi-square test we will assume the null hypothesis as below:
+# 
+# H0 : The Petal.Width.Cat has no affect on the Species
+#
+# Consequently, the alternate hypotheses will be defined as below:
+#
+# Ha : The Petal.Width.Cat has some affect on the Species
+# 
+# We will perform the test using chisq.test function in R.
+
+chi <- chisq.test(tab)
+chi
+
+```
+
+
+## Plotting
+
+
+```R
+
+# install required packages
+install.packages(ggplot2)
+install.packages(ggsignif)
+
+# load packages
+library(ggplot2)
+library(ggsignif)
+
+# reload iris data
+data(iris)
+
+# simple example with automatic wilcox test
+ggplot(iris, aes(x = Species, y = Sepal.Length)) +
+  geom_boxplot() + # using `ggsignif` to display comparison of interest
+  geom_signif(
+    comparisons = list(c("versicolor", "virginica")),
+    map_signif_level = TRUE
+  )
+
+# advanced example
+
+dat <- data.frame(
+  Group = c("S1", "S1", "S2", "S2"),
+  Sub = c("A", "B", "A", "B"),
+  Value = c(3, 5, 7, 8)
+)
+
+ggplot(dat, aes(Group, Value)) +
+  geom_bar(aes(fill = Sub), stat = "identity", position = "dodge", width = .5) +
+  geom_signif(
+    y_position = c(5.3, 8.3), xmin = c(0.8, 1.8), xmax = c(1.2, 2.2),
+    annotation = c("**", "NS"), tip_length = 0
+  ) +
+  geom_signif(
+    comparisons = list(c("S1", "S2")),
+    y_position = 9.3, tip_length = 0, vjust = 0.2
+  ) +
+  scale_fill_manual(values = c("grey80", "grey20"))
+
+
+```
