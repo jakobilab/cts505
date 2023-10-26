@@ -139,6 +139,70 @@ ggplot(data=iris,mapping=aes(x=Petal.Length,y=Petal.Width))+
        y="Petal Width", caption="This is a little caption.")+
   facet_wrap(~Species)
 
+```
 
+
+## Using ggrepel for text labels
+
+```R
+
+# install package
+install.packages("ggrepel")
+
+# the only change here is geom_label_repel() instead of geom_label()
+
+ggplot(data=iris,mapping=aes(x=Petal.Length,y=Petal.Width))+
+  geom_point(aes(color=Sepal.Width))+
+  geom_label_repel(aes(label=Sepal.Width,hjust=0),nudge_x=0.5,size=3) +
+  geom_smooth(method="lm")+
+  scale_color_continuous(name="New Legend Title")+
+  scale_x_continuous(breaks=1:8)+
+  labs(title="This Is A Title",subtitle="This is a subtitle",x=" Petal Length", 
+       y="Petal Width", caption="This is a little caption.")+
+  facet_wrap(~Species)
+
+```
+
+
+## Saving a plot as file
+
+```R
+
+# this specifies PDF format
+# play around with width and heith arguments to find a good size
+# default unit is inch
+pdf('plot.pdf', width=5, height=5)
+
+ggplot(data=iris,mapping=aes(x=Petal.Length,y=Petal.Width))+
+  geom_point(aes(color=Sepal.Width))+
+  geom_label_repel(aes(label=Sepal.Width,hjust=0),nudge_x=0.5,size=3) +
+  geom_smooth(method="lm")+
+  scale_color_continuous(name="New Legend Title")+
+  scale_x_continuous(breaks=1:8)+
+  labs(title="This Is A Title",subtitle="This is a subtitle",x=" Petal Length", 
+       y="Petal Width", caption="This is a little caption.")+
+  facet_wrap(~Species)
+
+# we have to disable the device after plotting
+dev.off()
+
+
+# this specifies PNG format
+# play around with width and heith arguments to find a good size
+# default unit is pixel for PNG
+png('plot.pdf', width=500, height=500)
+
+ggplot(data=iris,mapping=aes(x=Petal.Length,y=Petal.Width))+
+  geom_point(aes(color=Sepal.Width))+
+  geom_label_repel(aes(label=Sepal.Width,hjust=0),nudge_x=0.5,size=3) +
+  geom_smooth(method="lm")+
+  scale_color_continuous(name="New Legend Title")+
+  scale_x_continuous(breaks=1:8)+
+  labs(title="This Is A Title",subtitle="This is a subtitle",x=" Petal Length", 
+       y="Petal Width", caption="This is a little caption.")+
+  facet_wrap(~Species)
+
+# we have to disable the device after plotting
+dev.off()
 
 ```
