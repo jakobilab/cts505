@@ -24,15 +24,15 @@ Please include loaded libraries, loading of files, and all other commands in the
 
   \begin{alphaparts}
     \questionpart Download a list of gene IDs with expression values and false discovery rate (FDR) columns from \texttt{https://links.jakobilab.org/cts505\_genes}.
-    \questionpart What gene IDs have been provided?
-    Identify the correct species based on the ID format.
+    \questionpart Identify the organism used for the experiment based on the provided gene IDs for the next tasks.
   \end{alphaparts}
 
 
 \question
 
   \begin{alphaparts}
-    \questionpart Use the \texttt{biomaRt} package to retrieve gene names and Uniprot IDs for the provided gene IDs.
+    \questionpart Read the provided input file into R with an appropriate function.
+    \questionpart Use the \texttt{biomaRt} package to retrieve gene names and Uniprot IDs for the provided gene IDs using the identified organism.
     \questionpart Print the top 10 highest expressed genes based on the logFC value into a new CSV file, \texttt{top10.csv}.
     Include the gene names and Uniprot IDs.
   \end{alphaparts}
@@ -40,8 +40,12 @@ Please include loaded libraries, loading of files, and all other commands in the
 \question
 
   \begin{alphaparts}
-    \questionpart Use the \texttt{ggplot2} package to create an X-Y graph plotting \texttt{log10(FDR value)} on the Y axis and the logFC value on the X axis.
-    \questionpart Set a title and descriptive X and Y axis labels and save the plot a PDF file \texttt{xy\_plot.pdf}.
+    \questionpart Use the \texttt{ggplot2} package to create an X-Y graph that plots \texttt{log10(FDR value)} on the Y axis and the logFC value on the X axis.
+    \questionpart Set a title and descriptive X and Y axis labels and save the plot to PDF file named \texttt{xy\_plot.pdf}.
   \end{alphaparts}
+
+Please send your R scripts \& plots as attachment via email to \texttt{tjakobi@arizona.edu}.
+
+In case of questions please do not hesitate to contact me.
 
 \end{document}
