@@ -16,30 +16,32 @@
 \begin{document}
 \maketitle
 
-The solutions for the tasks listed below should be saved in separate \texttt{.R} files, i.e. \texttt{task1.R}, \texttt{task2.R}.
+The solutions for the tasks listed below should be saved in separate \texttt{.R} files, e.g. \texttt{task1.R}, \texttt{task2.R}.
 
 Please include loaded libraries, loading of files, and all other commands in the files.
 
 \question
-  This question's number will be auto-incremented.
 
-
-\question
-  This question was given a fancy name!
-
-  Therefore, we have proven the claim by induction in the \texttt{induction} environment.
-
-\question
-  You can still do things like nesting lists inside of these environments.
   \begin{alphaparts}
-    \questionpart Use \LaTeX
-      \begin{enumerate}
-        \item Open terminal
-        \item Open vim
-        \item Write LaTeX
-      \end{enumerate}
-    \questionpart ???
-    \questionpart Profit!
+    \questionpart Download a list of gene IDs with expression values and false discovery rate (FDR) columns from \texttt{https://links.jakobilab.org/cts505\_genes}.
+    \questionpart What gene IDs have been provided?
+    Identify the correct species based on the ID format.
+  \end{alphaparts}
+
+
+\question
+
+  \begin{alphaparts}
+    \questionpart Use the \texttt{biomaRt} package to retrieve gene names and Uniprot IDs for the provided gene IDs.
+    \questionpart Print the top 10 highest expressed genes based on the logFC value into a new CSV file, \texttt{top10.csv}.
+    Include the gene names and Uniprot IDs.
+  \end{alphaparts}
+
+\question
+
+  \begin{alphaparts}
+    \questionpart Use the \texttt{ggplot2} package to create a X-Y graph plotting \texttt{log10(FDR value)} on the Y axis and the logFC value on the X axis.
+    \questionpart Set a title and descriptive X and Y axis labels and save the plot a PDF file \texttt{xy\_plot.pdf}.
   \end{alphaparts}
 
 \end{document}
