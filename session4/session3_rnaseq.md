@@ -98,3 +98,17 @@ x$samples
 ## JMS9-P8c   GSM1545545_JMS9-P8c.txt    LP 19958838            1 L008
 
 ```
+
+
+## fix gene names - offline without biomaRt
+
+```R
+# get IDs from row names
+geneid <- rownames(x)
+
+# use Mus.musculus package to offline conert IDs
+genes <- select(Mus.musculus, keys=geneid, columns=c("SYMBOL", "TXCHROM"), 
+                keytype="ENTREZID")
+head(genes)
+
+```
