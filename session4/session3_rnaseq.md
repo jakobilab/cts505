@@ -111,4 +111,87 @@ genes <- select(Mus.musculus, keys=geneid, columns=c("SYMBOL", "TXCHROM"),
                 keytype="ENTREZID")
 head(genes)
 
+##    ENTREZID  SYMBOL TXCHROM
+## 1    497097    Xkr4    chr1
+## 2 100503874 Gm19938    <NA>
+## 3 100038431 Gm10568    <NA>
+## 4     19888     Rp1    chr1
+## 5     20671   Sox17    chr1
+## 6     27395  Mrpl15    chr1
+
+# only keep first occurence of each gene name; remove duplicates
+genes <- genes[!duplicated(genes$ENTREZID),]
+
+```
+
+## convert raw counts to normalized counts
+
+```R
+# we use CPM here (counts per million)
+# this is very helpful since we do NOT need gene lengths for CPM calculation
+
+# for FPKM (Fragments Per Kilobase of transcript per Million mapped reads) or 
+# RPKM (Reads Per Kilobase per Million mapped reads) we require the gene lengths
+
+# RPKM / FPKM:
+
+# RPKM: single end, FPKM: paired-end
+
+# a) Count up the total reads in a sample and divide that number by 1,000,000 – this is our “per million” scaling factor.
+# b) Divide the read counts by the “per million” scaling factor. This normalizes for sequencing depth, giving you reads per million (RPM)
+# c) Divide the RPM values by the length of the gene, in kilobases. This gives you RPKM.
+
+cpm <- cpm(x)
+# log CPM with added prior counts (2/(library size))
+lcpm <- cpm(x, log=TRUE)
+
+# show table
+summary(lcpm)
+
+
+```
+
+## remove very lowly expressed reads
+
+```R
+# i.e. all rows with ZERO reads in 9 conditions (columns)
+table(rowSums(x$counts==0)==9)
+
+# let edgeR do the work for us
+# keeps genes with about 10 read counts or more in a minimum number of samples, where the number of samples is chosen according to the minimum group sample size.
+keep.exprs <- filterByExpr(x, group=group)
+x <- x[keep.exprs,, keep.lib.sizes=FALSE]
+dim(x)
+
+# visualize cleaned data
+
+
+L <- mean(x$samples$lib.size) * 1e-6
+M <- median(x$samples$lib.size) * 1e-6
+c(L, M)
+
+lcpm.cutoff <- log2(10/M + 2/L)
+library(RColorBrewer)
+nsamples <- ncol(x)
+col <- brewer.pal(nsamples, "Paired")
+par(mfrow=c(1,2))
+plot(density(lcpm[,1]), col=col[1], lwd=2, ylim=c(0,0.26), las=2, main="", xlab="")
+title(main="A. Raw data", xlab="Log-cpm")
+abline(v=lcpm.cutoff, lty=3)
+for (i in 2:nsamples){
+den <- density(lcpm[,i])
+lines(den$x, den$y, col=col[i], lwd=2)
+}
+legend("topright", samplenames, text.col=col, bty="n")
+lcpm <- cpm(x, log=TRUE)
+plot(density(lcpm[,1]), col=col[1], lwd=2, ylim=c(0,0.26), las=2, main="", xlab="")
+title(main="B. Filtered data", xlab="Log-cpm")
+abline(v=lcpm.cutoff, lty=3)
+for (i in 2:nsamples){
+den <- density(lcpm[,i])
+lines(den$x, den$y, col=col[i], lwd=2)
+}
+legend("topright", samplenames, text.col=col, bty="n")
+
+
 ```
