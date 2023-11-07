@@ -1,26 +1,36 @@
 # Introduction to R: RNA-seq analysis - part 2
 
 
-## Fix gene names - offline without biomaRt
+## Quickstart
 
 ```R
-# get IDs from row names
-geneid <- rownames(x)
 
-# use Mus.musculus package to offline conert IDs
+library(limma)
+library(Glimma)
+library(edgeR)
+library(Mus.musculus)
+
+url <- "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE63310&format=file"
+utils::download.file(url, destfile="GSE63310_RAW.tar", mode="wb") 
+utils::untar("GSE63310_RAW.tar", exdir = ".")
+
+files <- c("GSM1545535_10_6_5_11.txt", "GSM1545536_9_6_5_11.txt", "GSM1545538_purep53.txt",
+  "GSM1545539_JMS8-2.txt", "GSM1545540_JMS8-3.txt", "GSM1545541_JMS8-4.txt",
+  "GSM1545542_JMS8-5.txt", "GSM1545544_JMS9-P7c.txt", "GSM1545545_JMS9-P8c.txt")
+for(i in paste(files, ".gz", sep=""))
+  R.utils::gunzip(i, overwrite=TRUE)
+x <- readDGE(files, columns=c(1,3))
+
+samplenames <- substring(colnames(x), 12, nchar(colnames(x)))
+colnames(x) <- samplenames
+group <- as.factor(c("LP", "ML", "Basal", "Basal", "ML", "LP", 
+                     "Basal", "ML", "LP"))
+x$samples$group <- group
+lane <- as.factor(rep(c("L004","L006","L008"), c(3,4,2)))
+x$samples$lane <- lane
+geneid <- rownames(x)
 genes <- select(Mus.musculus, keys=geneid, columns=c("SYMBOL", "TXCHROM"), 
                 keytype="ENTREZID")
-head(genes)
-
-##    ENTREZID  SYMBOL TXCHROM
-## 1    497097    Xkr4    chr1
-## 2 100503874 Gm19938    <NA>
-## 3 100038431 Gm10568    <NA>
-## 4     19888     Rp1    chr1
-## 5     20671   Sox17    chr1
-## 6     27395  Mrpl15    chr1
-
-# only keep first occurence of each gene name; remove duplicates
 genes <- genes[!duplicated(genes$ENTREZID),]
 
 ```
