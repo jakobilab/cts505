@@ -173,3 +173,49 @@ glMDSPlot(lcpm, labels=paste(group, lane, sep="_"),
           groups=x$samples[,c(2,5)], launch=FALSE)
 
 ```
+
+## Building the design matrix
+
+```R
+# inspect sample name, group, lane associations
+data.frame(colnames(x),group,lane)
+
+# we are interested in difference within group
+# we want to adjust for differences between lanes
+
+design <- model.matrix(~0+group+lane)
+rownames(design) <- colnames(x)
+colnames(design) <- gsub("group", "", colnames(design))
+
+# check design
+
+
+# set up contrasts
+contr.matrix <- makeContrasts(
+   BasalvsLP = Basal-LP, 
+   BasalvsML = Basal - ML, 
+   LPvsML = LP - ML, 
+   levels = colnames(design))
+contr.matrix
+
+```
+
+
+## Differential gene expression
+
+```R
+
+#The square root of the common dispersion gives the
+# coefficient of variation of biological variation
+y <- estimateDisp(x, design, robust=TRUE)
+y$common.dispersion
+
+# fit the generalized linear model (glms)
+fit <- glmFit(y, design)
+
+# conduct likelihood ratio tests for LP vs. Basal using our contrast
+ lrt <- glmLRT(fit, contrast = contr.matrix[, 'BasalvsLP'])
+
+# get the differentially expressd genes
+ topTags(lrt)
+```
