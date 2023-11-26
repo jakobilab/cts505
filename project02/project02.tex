@@ -1,0 +1,65 @@
+\documentclass[11pt,largemargins, letter]{homework}
+
+\newcommand{\hwname}{Tobias Jakobi}
+\newcommand{\hwemail}{tjakobi@arizona.edu}
+\newcommand{\hwtype}{Project}
+\newcommand{\hwnum}{2}
+\newcommand{\hwclass}{CTS505}
+\newcommand{\hwlecture}{2023}
+\newcommand{\hwsection}{-11}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{fontawesome5}
+
+
+\renewcommand{\questiontype}{Task}
+
+\begin{document}
+\maketitle
+
+The solutions for the tasks below should be saved in a single \texttt{.R} file, with comment lines highlighting each task, e.g.,
+
+\begin{verbatim}
+# this is the code for Task 1 a)
+head(varX)
+\end{verbatim}
+
+Please include loaded libraries, loading of files, and all other commands in the file.
+
+\question
+
+\begin{itemize}
+
+    \item Download the list of gene counts stored in the following file \\\texttt{https://links.jakobilab.org/p2\_counts}
+    \item Identify the organism used for the experiment based on the provided gene IDs for the next tasks.
+\end{itemize}
+
+  \begin{alphaparts}
+
+    \questionpart Establish a reasonable grouping of the provided samples based on the sample names.
+    \questionpart Read the provided input file into \faRProject \hspace{0.1mm} with an appropriate function.
+    \questionpart Use the \texttt{biomaRt} package or any other suitable ID conversion package to retrieve gene names for gene IDs.
+  \end{alphaparts}
+
+\question
+
+  \begin{alphaparts}
+    \questionpart Develop a suitable design formula as discussed in the class to perform differential gene expression analysis between your chosen groups.
+    \questionpart Use the \texttt{edgeR} workflow to build an \texttt{DGElist} object.
+    \questionpart Using \texttt{edgeR}, perform filtering and normalization of the imported count data.
+    \questionpart Lastly, perform differential gene expression analysis and note the number of up- and down regulated genes.
+  \end{alphaparts}
+
+\question
+
+  \begin{alphaparts}
+    \questionpart Save a result table with differentially expressed genes filtered by p-value and FDR (0.05) and sorted by logFC.
+  \end{alphaparts}
+
+
+
+Please send your \faRProject \hspace{0.1mm} script and result file attachment via email to \texttt{tjakobi@arizona.edu}.
+
+In case of questions, please do not hesitate to contact me.
+
+\end{document}
