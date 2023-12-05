@@ -79,7 +79,6 @@ mutable_seq = MutableSeq(str(new_seq))
 
 ## Loading larger sequences from files
 
-
 ### FASTA file
 ```Python
 from Bio.SeqIO import parse 
@@ -116,4 +115,89 @@ for record in records:
    print("Annotations: %s" % record.annotations) 
    print("Sequence Data: %s" % record.seq) 
    print("Sequence Alphabet: %s" % record.alphabet)
+```
+
+
+## Working with graphics output
+
+### create a simple genomic diagram
+```Python
+# we have to install reportlab first!
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+
+
+from Bio.Graphics import GenomeDiagram
+from Bio import SeqIO
+
+# directly read GenBank file
+record = SeqIO.read("NC_005816.gb", "genbank")
+
+# get a first idea of the file contents
+print(record)
+
+# create the base diagram
+gd_diagram = GenomeDiagram.Diagram("Yersinia pestis biovar Microtus plasmid pPCP1")
+gd_track_for_features = gd_diagram.new_track(1, name="Annotated Features")
+gd_feature_set = gd_track_for_features.new_set()
+
+# now we add features
+for feature in record.features:
+    if feature.type != "gene":
+        # Exclude this feature
+        continue
+    if len(gd_feature_set) % 2 == 0:
+        color = colors.blue
+    else:
+        color = colors.lightblue
+    gd_feature_set.add_feature(feature, color=color, label=True)
+
+# write out diagram
+gd_diagram.draw(
+    format="linear",
+    orientation="landscape",
+    pagesize="A4",
+    fragments=4,
+    start=0,
+    end=len(record),
+)
+gd_diagram.write("plasmid_linear.pdf", "PDF")
+gd_diagram.write("plasmid_linear.eps", "EPS")
+gd_diagram.write("plasmid_linear.svg", "SVG")
+
+# now lets make it circular
+gd_diagram.draw(
+    format="circular",
+    circular=True,
+    pagesize=(20 * cm, 20 * cm),
+    start=0,
+    end=len(record),
+    circle_core=0.7,
+)
+gd_diagram.write("plasmid_circular.pdf", "PDF")
+
+```
+
+
+## Some recipes from the cookbook
+
+### Simple FASTQ quality filter
+```Python
+from Bio import SeqIO
+
+count = 0
+for rec in SeqIO.parse("SRR020192.fastq", "fastq"):
+    count += 1
+print("%i reads" % count)
+
+# minimum quality set to 20 beelow
+from Bio import SeqIO
+
+good_reads = (
+    rec
+    for rec in SeqIO.parse("SRR020192.fastq", "fastq")
+    if min(rec.letter_annotations["phred_quality"]) >= 20
+)
+count = SeqIO.write(good_reads, "good_quality.fastq", "fastq")
+print("Saved %i reads" % count)
 ```
