@@ -184,20 +184,47 @@ gd_diagram.write("plasmid_circular.pdf", "PDF")
 ### Simple FASTQ quality filter
 ```Python
 from Bio import SeqIO
+import gzip
 
 count = 0
-for rec in SeqIO.parse("SRR020192.fastq", "fastq"):
-    count += 1
+
+with gzip.open("SRR020192.fastq.gz", "rt") as handle:
+    for rec in SeqIO.parse(handle, "fastq"):
+        count += 1
 print("%i reads" % count)
 
-# minimum quality set to 20 beelow
-from Bio import SeqIO
+# minimum quality set to 20 below
 
 good_reads = (
     rec
-    for rec in SeqIO.parse("SRR020192.fastq", "fastq")
-    if min(rec.letter_annotations["phred_quality"]) >= 20
+    for rec in SeqIO.parse("SRR020192.fastq", "rt")
+        if min(rec.letter_annotations["phred_quality"]) >= 20
 )
+
 count = SeqIO.write(good_reads, "good_quality.fastq", "fastq")
 print("Saved %i reads" % count)
+```
+
+
+### Read length histogram
+```Python
+from Bio import SeqIO
+sizes = [len(rec) for rec in SeqIO.parse("ls_orchid.fasta", "fasta")]
+len(sizes), min(sizes), max(sizes)
+
+# Now that we have the lengths of all the genes (as a list of integers), we can use the matplotlib histogram function to display it.
+
+from Bio import SeqIO
+
+sizes = [len(rec) for rec in SeqIO.parse("ls_orchid.fasta", "fasta")]
+
+import pylab
+
+pylab.hist(sizes, bins=20)
+pylab.title(
+    "%i orchid sequences\nLengths %i to %i" % (len(sizes), min(sizes), max(sizes))
+)
+pylab.xlabel("Sequence length (bp)")
+pylab.ylabel("Count")
+pylab.show()
 ```
